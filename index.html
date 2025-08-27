@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Venezuelan Cartel Money Game</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 100%);
+            color: #e0e1dd;
+            min-height: 100vh;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        header {
+            text-align: center;
+            padding: 15px 10px;
+            background: rgba(26, 36, 56, 0.8);
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            border: 1px solid #415a77;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            color: #e0e1dd;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: #9ca3af;
+            margin-bottom: 10px;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-box {
+            background: rgba(26, 36, 56, 0.8);
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            border: 1px solid #415a77;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fca311;
+            margin-top: 5px;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            background: rgba(26, 36, 56, 0.8);
+            border-radius: 12px;
+            padding: 5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            border: 1px solid #415a77;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 5px;
+            text-align: center;
+            background: #1f3050;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            min-width: 80px;
+        }
+
+        .tab.active {
+            background: #415a77;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .content-area {
+            background: rgba(26, 36, 56, 0.8);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            min-height: 300px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            border: 1px solid #415a77;
+            overflow-y: auto;
+            max-height: 40vh;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .item-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .item {
+            background: rgba(38, 49, 71, 0.8);
+            padding: 12px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            border: 1px solid #4c6b97;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .item-details {
+            font-size: 0.85rem;
+            color: #9ca3af;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .btn-buy {
+            background: linear-gradient(to bottom, #2ecc71, #27ae60);
+            color: white;
+        }
+
+        .btn-sell {
+            background: linear-gradient(to bottom, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .btn-upgrade {
+            background: linear-gradient(to bottom, #3498db, #2980b9);
+            color: white;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .event-log {
+            background: rgba(20, 30, 48, 0.9);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+            height: 120px;
+            overflow-y: auto;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+            border: 1px solid #415a77;
+        }
+
+        .event {
+            padding: 8px 0;
+            border-bottom: 1px solid #2d3748;
+            font-size: 0.9rem;
+        }
+
+        .event:last-child {
+            border-bottom: none;
+        }
+
+        .positive {
+            color: #2ecc71;
+        }
+
+        .negative {
+            color: #e74c3c;
+        }
+
+        .neutral {
+            color: #3498db;
+        }
+
+        .warning {
+            color: #f39c12;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .action-btn {
+            padding: 15px;
+            border-radius: 10px;
+            border: none;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            background: linear-gradient(to bottom, #415a77, #2d3748);
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+
+        .action-btn i {
+            font-size: 1.5rem;
+        }
+
+        .risk-meter {
+            height: 10px;
+            background: #2d3748;
+            border-radius: 5px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .risk-level {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .production-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(38, 49, 71, 0.8);
+            border-radius: 10px;
+        }
+
+        .production-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .production-progress {
+            height: 10px;
+            background: #2d3748;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .production-progress-bar {
+            height: 100%;
+            background: #3498db;
+            border-radius: 5px;
+            width: 0%;
+        }
+
+        .production-details {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            margin-bottom: 8px;
+        }
+
+        .investment-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(38, 49, 71, 0.8);
+            border-radius: 10px;
+            border-left: 4px solid #f39c12;
+        }
+
+        .investment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .investment-details {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            margin-bottom: 8px;
+        }
+
+        .owned-tag {
+            background: #27ae60;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            margin-left: 8px;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                max-width: 600px;
+            }
+            
+            .stats-container {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .action-buttons {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Venezuelan Cartel Money Game</h1>
+            <div class="subtitle">Start with $3,000,000 and build your empire</div>
+        </header>
+
+        <div class="stats-container">
+            <div class="stat-box">
+                <div>Cash</div>
+                <div class="stat-value" id="cash">$3,000,000</div>
+            </div>
+            <div class="stat-box">
+                <div>Bank</div>
+                <div class="stat-value" id="bank">$0</div>
+            </div>
+            <div class="stat-box">
+                <div>Day</div>
+                <div class="stat-value" id="day">1</div>
+            </div>
+            <div class="stat-box">
+                <div>Risk</div>
+                <div class="stat-value" id="risk">10%</div>
+                <div class="risk-meter">
+                    <div class="risk-level" id="risk-level" style="width: 10%; background: #2ecc71;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="market">Market</div>
+            <div class="tab" data-tab="inventory">Inventory</div>
+            <div class="tab" data-tab="production">Production</div>
+            <div class="tab" data-tab="realestate">Real Estate</div>
+            <div class="tab" data-tab="business">Businesses</div>
+            <div class="tab" data-tab="stocks">Stocks</div>
+            <div class="tab" data-tab="equipment">Equipment</div>
+            <div class="tab" data-tab="connections">Connections</div>
+        </div>
+
+        <div class="content-area">
+            <div class="content-section active" id="market-content">
+                <h2>Drug Market</h2>
+                <div class="item-list">
+                    <div class="item">
+                        <div class="item-info">
+                            <div class="item-name">Cocaine</div>
+                            <div class="item-details">Price: <span id="cocaine-price">$25,000</span> | Qty: <span id="cocaine-available">10</span></div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-buy" data-item="cocaine">Buy</button>
+                            <button class="btn btn-sell" data-item="cocaine">Sell</button>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="item-info">
+                            <div class="item-name">Heroin</div>
+                            <div class="item-details">Price: <span id="heroin-price">$18,000</span> | Qty: <span id="heroin-available">8</span></div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-buy" data-item="heroin">Buy</button>
+                            <button class="btn btn-sell" data-item="heroin">Sell</button>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="item-info">
+                            <div class="item-name">Marijuana</div>
+                            <div class="item-details">Price: <span id="marijuana-price">$4,000</span> | Qty: <span id="marijuana-available">20</span></div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-buy" data-item="marijuana">Buy</button>
+                            <button class="btn btn-sell" data-item="marijuana">Sell</button>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="item-info">
+                            <div class="item-name">Prescription Pills</div>
+                            <div class="item-details">Price: <span id="pills-price">$1,500</span> | Qty: <span id="pills-available">30</span></div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-buy" data-item="pills">Buy</button>
+                            <button class="btn btn-sell" data-item="pills">Sell</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-section" id="inventory-content">
+                <h2>Your Inventory</h2>
+                <div class="item-list">
+                    <div class="item">
+                        <div class="item-info">
+                            <div class="item-name">Cocaine</div>
+                            <div class="item-details">Quantity: <span id="cocaine-owned">0</span> | Value: $<span id="cocaine-value">0</span></div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="item-info">
+                            <div class="item-name">Heroin</div>
+                            <div class="item-details">Quantity: <span id="heroin-owned">0</span> | Value: $<span id="heroin-value">0</span></div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="item-info">
+                            <div class="item-name">Marijuana</div>
+                            <div class="item-details">Quantity: <span id="marijuana-owned">0</span> | Value: $<span id="marijuana-value">0</span></div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="item-info">
+                            <div class="item-name">Prescription Pills</div>
+                            <div class="item-details">Quantity: <span id="pills-owned">0</span> | Value: $<span id="pills-value">0</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-section" id="production-content">
+                <h2>Production Facilities</h2>
+                <div class="production-item">
+                    <div class="production-header">
+                        <div class="item-name">Cocaine Lab</div>
+                        <div class="item-details">Level: <span id="cocaine-lab-level">0</span></div>
+                    </div>
+                    <div class="production-progress">
+                        <div class="production-progress-bar" id="cocaine-progress"></div>
+                    </div>
+                    <div class="production-details">
+                        Production: <span id="cocaine-production">0</span> units/day | Cost: $<span id="cocaine-lab-cost">100000</span>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-upgrade" data-production="cocaine">Upgrade Lab</button>
+                        <button class="btn btn-buy" data-production="cocaine">Speed Up ($5,000)</button>
+                    </div>
+                </div>
+                
+                <div class="production-item">
+                    <div class="production-header">
+                        <div class="item-name">Heroin Processing</div>
+                        <div class="item-details">Level: <span id="heroin-lab-level">0</span></div>
+                    </div>
+                    <div class="production-progress">
+                        <div class="production-progress-bar" id="heroin-progress"></div>
+                    </div>
+                    <div class="production-details">
+                        Production: <span id="heroin-production">0</span> units/day | Cost: $<span id="heroin-lab-cost">80000</span>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-upgrade" data-production="heroin">Upgrade Lab</button>
+                        <button class="btn btn-buy" data-production="heroin">Speed Up ($4,000)</button>
+                    </div>
+                </div>
+                
+                <div class="production-item">
+                    <div class="production-header">
+                        <div class="item-name">Marijuana Farm</div>
+                        <div class="item-details">Level: <span id="marijuana-lab-level">0</span></div>
+                    </div>
+                    <div class="production-progress">
+                        <div class="production-progress-bar" id="marijuana-progress"></div>
+                    </div>
+                    <div class="production-details">
+                        Production: <span id="marijuana-production">0</span> units/day | Cost: $<span id="marijuana-lab-cost">50000</span>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-upgrade" data-production="marijuana">Upgrade Farm</button>
+                        <button class="btn btn-buy" data-production="marijuana">Speed Up ($2,000)</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-section" id="realestate-content">
+                <h2>Real Estate Investments</h2>
+                <div class="investment-item">
+                    <div class="investment-header">
+                        <div class="item-name">Caracas Apartment Building <span id="apartment-owned" class="owned-tag" style="display: none;">Owned</span></div>
+                        <div class="item-details">$<span id="apartment-price">500000</span></div>
+                    </div>
+                    <div class="investment-details">
+                        Income: $<span id="apartment-income">5000</span>/day | Reduces risk by 5%
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-upgrade" data-realestate="apartment">Purchase</button>
+                    </div>
+                </div>
+                
+                <div class="investment-item">
+                    <div class="investment-header">
+                        <div class="item-name">Luxury Beach Villa <span id="villa-owned" class="owned-tag" style="display: none;">Owned</span></div>
+                        <div class="item-details">$<span id="villa-price">1200000</span></div>
+                    </div>
+                    <div class="investment-details">
+                        Income: $<span id="villa-income">10000</span>/day | Reduces risk by 8%
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-upgrade" data-realestate="villa">Purchase</button>
+                    </div>
+                </div>
+                
+                <div class="investment-item">
+                    <div class="investment-header">
+                        <div class="item-name">Commercial Warehouse <span id="warehouse-owned" class="owned-tag" style="display: none;">Owned</span></div>
+                        <div class="item-details">$<span id="warehouse-price">800000</span></div>
+                    </div>
+                    <div class="investment-details">
+                        Income: $<span id="warehouse-income">7000</span>/day | Increases storage capacity by 20%
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-upgrade" data-realestate="commercial">Purchase</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-section" id="business-content">
+                <h2>Business Fronts</h2>
+                <div class="investment-item">
+                    <div class="investment-header">
+                        <div class="item-name">Nightclub <span id="nightclub-owned" class="owned-tag" style="display: none;">Owned</span></div>
+                        <div class="item-details">$<span id="nightclub-price">750000</span></div>
+                    </div>
+                    <div class="investment-details">
+                        Income: $<span id="nightclub-income">8000</span>/day | Money laundering: $<span id="nightclub-launder">20000</span>/day
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-upgrade" data-business="nightclub">Purchase</button>
+                        <button class="btn btn-buy" data-business="nightclub">Launder Money</button>
+                    </div>
+                </div>
+                
+                <div class="investment-item">
+                    <div class="investment-header">
+                        <div class="item-name">Restaurant Chain <span id="restaurant-owned" class="owned-tag" style="display: none;">Owned</span></div>
+                        <div class="item-details">$<span id="restaurant-price">1500000</span></div>
+                    </div>
+                    <div class="investment-details">
+                        Income: $<span id="restaurant-income">12000</span>/day | Money laundering: $<span id="restaurant-launder">30000</span>/day
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-upgrade" data-business="restaurant">Purchase</button>
+                        <button class="btn btn-buy" data-business="restaurant">Launder Money</button>
+                    </div>
+                </div>
+                
+                <div class="investment-item">
+                    <div class="investment-header">
+                        <div class="item-name">Import/Export Business <span id="import-owned" class="owned-tag" style="display: none;">Owned</span></div>
+                        <div class="item-details">$<span id="import-price">2000000</span></div>
+                    </div>
+                    <div class="investment-details">
+                        Income: $<span id="import-income">15000</span>/day | Reduces transportation costs by 25%
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-upgrade" data-business="import">Purchase</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-section" id="stocks-content">
+                <h2>Stock Market</h2>
+                <div class="investment-item">
+                    <div class="investment-header">
+                        <div class="item-name">Petróleos de Venezuela (PDVSA)</div>
+                        <div class="item-details">$<span id="pdvsa-price">50</span>/share</div>
+                    </div>
+                    <div class="investment-details">
+                        Shares owned: <span id="pdvsa-owned">0</span> | Value: $<span id="pdvsa-value">0</span>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-buy" data-stock="pdvsa">Buy 10</button>
+                        <button class="btn btn-sell" data-stock="pdvsa">Sell 10</button>
+                    </div>
+                </div>
+                
+                <div class="investment-item">
+                    <div class="investment-header">
+                        <div class="item-name">Venezuelan Gold Mines</div>
+                        <div class="item-details">$<span id="gold-price">75</span>/share</div>
+                    </div>
+                    <div class="investment-details">
+                        Shares owned: <span id="gold-owned">0</span> | Value: $<span id="gold-value">0</span>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-buy" data-stock="gold">Buy 10</button>
+                        <button class="btn btn-sell" data-stock="gold">Sell 10</button>
+                    </div>
+                </div>
+                
+                <div class="investment-item">
+                    <div class="investment-header">
+                        <div class="item-name">Bolivar Digital Currency</div>
+                        <div class="item-details">$<span id="bolivar-price">10</span>/share</div>
+                    </div>
+                    <div class="investment-details">
+                        Shares owned: <span id="bolivar-owned">0</span> | Value: $<span id="bolivar-value">0</span>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-buy" data-stock="bolivar">Buy 10</button>
+                        <button class="btn btn-sell" data-stock="bolivar">Sell 10</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-section" id="equipment-content">
+                <h2>Equipment & Upgrades</h2>
+                <div class="item-list">
+                    <div class="item">
+                        <div class="item-info">
+                            <div class="item-name">Basic Car</div>
+                            <div class="item-details">Capacity: +10% | Price: $100,000</div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-upgrade" data-equipment="car">Buy</button>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="item-info">
+                            <div class="item-name">Security Team</div>
+                            <div class="item-details">Risk: -15% | Price: $250,000</div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-upgrade" data-equipment="security">Buy</button>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="item-info">
+                            <div class="item-name">Warehouse</div>
+                            <div class="item-details">Storage: +50% | Price: $500,000</div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-upgrade" data-equipment="warehouse">Buy</button>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="item-info">
+                            <div class="item-name">Armored Vehicle</div>
+                            <div class="item-details">Capacity: +30% | Price: $750,000</div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-upgrade" data-equipment="armored">Buy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-section" id="connections-content">
+                <h2>Connections</h2>
+                <div class="item-list">
+                    <div class="item">
+                        <div class="item-info">
+                            <div class="item-name">Local Police</div>
+                            <div class="item-details">Risk: -10% | Cost: $200,000</div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-upgrade" data-connection="police">Bribe</button>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="item-info">
+                            <div class="item-name">Customs Official</div>
+                            <div class="item-details">Import: +20% | Cost: $350,000</div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-upgrade" data-connection="customs">Bribe</button>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="item-info">
+                            <div class="item-name">Cartel Lieutenant</div>
+                            <div class="item-details">Prices: -15% | Cost: $600,000</div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-upgrade" data-connection="lieutenant">Recruit</button>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="item-info">
+                            <div class="item-name">Bank Manager</div>
+                            <div class="item-details">Interest: +5% | Cost: $400,000</div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-upgrade" data-connection="banker">Bribe</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="event-log" id="event-log">
+            <div class="event positive">Welcome to the Venezuelan Cartel Money Game!</div>
+            <div class="event neutral">You started with $3,000,000. Build your empire!</div>
+            <div class="event warning">Be careful - higher risk brings higher rewards but more danger!</div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="action-btn" id="travel-btn">
+                <i class="fas fa-exchange-alt"></i>
+                <span>Travel</span>
+            </button>
+            <button class="action-btn" id="bank-btn">
+                <i class="fas fa-money-bill-wave"></i>
+                <span>Bank</span>
+            </button>
+            <button class="action-btn" id="next-day-btn">
+                <i class="fas fa-forward"></i>
+                <span>Next Day</span>
+            </button>
+            <button class="action-btn" id="stats-btn">
+                <i class="fas fa-chart-line"></i>
+                <span>Stats</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab switching functionality
+            const tabs = document.querySelectorAll('.tab');
+            const contentSections = document.querySelectorAll('.content-section');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.getAttribute('data-tab');
+                    
+                    // Update active tab
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // Show corresponding content
+                    contentSections.forEach(section => {
+                        section.classList.remove('active');
+                        if (section.id === `${tabName}-content`) {
+                            section.classList.add('active');
+                        }
+                    });
+                });
+            });
+            
+            // Game state
+            const gameState = {
+                cash: 3000000,
+                bank: 0,
+                day: 1,
+                risk: 10,
+                inventory: {
+                    cocaine: 0,
+                    heroin: 0,
+                    marijuana: 0,
+                    pills: 0
+                },
+                marketPrices: {
+                    cocaine: 25000,
+                    heroin: 18000,
+                    marijuana: 4000,
+                    pills: 1500
+                },
+                marketAvailability: {
+                    cocaine: 10,
+                    heroin: 8,
+                    marijuana: 20,
+                    pills: 30
+                },
+                production: {
+                    cocaine: { level: 0, progress: 0, rate: 0 },
+                    heroin: { level: 0, progress: 0, rate: 0 },
+                    marijuana: { level: 0, progress: 0, rate: 0 }
+                },
+                realEstate: {
+                    apartment: { owned: false, price: 500000, income: 5000 },
+                    villa: { owned: false, price: 1200000, income: 10000 },
+                    commercial: { owned: false, price: 800000, income: 7000 }
+                },
+                businesses: {
+                    nightclub: { owned: false, price: 750000, income: 8000, launder: 20000 },
+                    restaurant: { owned: false, price: 1500000, income: 12000, launder: 30000 },
+                    import: { owned: false, price: 2000000, income: 15000 }
+                },
+                stocks: {
+                    pdvsa: { owned: 0, price: 50 },
+                    gold: { owned: 0, price: 75 },
+                    bolivar: { owned: 0, price: 10 }
+                },
+                equipment: {
+                    car: false,
+                    security: false,
+                    warehouse: false,
+                    armored: false
+                },
+                connections: {
+                    police: false,
+                    customs: false,
+                    lieutenant: false,
+                    banker: false
+                },
+                productionCosts: {
+                    cocaine: 100000,
+                    heroin: 80000,
+                    marijuana: 50000
+                }
+            };
+            
+            // Update UI with game state
+            function updateUI() {
+                // Update stats
+                document.getElementById('cash').textContent = `$${gameState.cash.toLocaleString()}`;
+                document.getElementById('bank').textContent = `$${gameState.bank.toLocaleString()}`;
+                document.getElementById('day').textContent = gameState.day;
+                document.getElementById('risk').textContent = `${gameState.risk}%`;
+                
+                // Update risk level indicator
+                const riskLevel = document.getElementById('risk-level');
+                riskLevel.style.width = `${gameState.risk}%`;
+                
+                // Change color based on risk level
+                if (gameState.risk < 30) {
+                    riskLevel.style.background = '#2ecc71';
+                } else if (gameState.risk < 60) {
+                    riskLevel.style.background = '#f39c12';
+                } else {
+                    riskLevel.style.background = '#e74c3c';
+                }
+                
+                // Update market prices
+                document.getElementById('cocaine-price').textContent = `$${gameState.marketPrices.cocaine.toLocaleString()}`;
+                document.getElementById('heroin-price').textContent = `$${gameState.marketPrices.heroin.toLocaleString()}`;
+                document.getElementById('marijuana-price').textContent = `$${gameState.marketPrices.marijuana.toLocaleString()}`;
+                document.getElementById('pills-price').textContent = `$${gameState.marketPrices.pills.toLocaleString()}`;
+                
+                // Update market availability
+                document.getElementById('cocaine-available').textContent = gameState.marketAvailability.cocaine;
+                document.getElementById('heroin-available').textContent = gameState.marketAvailability.heroin;
+                document.getElementById('marijuana-available').textContent = gameState.marketAvailability.marijuana;
+                document.getElementById('pills-available').textContent = gameState.marketAvailability.pills;
+                
+                // Update inventory
+                document.getElementById('cocaine-owned').textContent = gameState.inventory.cocaine;
+                document.getElementById('heroin-owned').textContent = gameState.inventory.heroin;
+                document.getElementById('marijuana-owned').textContent = gameState.inventory.marijuana;
+                document.getElementById('pills-owned').textContent = gameState.inventory.pills;
+                
+                // Update inventory values
+                document.getElementById('cocaine-value').textContent = (gameState.inventory.cocaine * gameState.marketPrices.cocaine).toLocaleString();
+                document.getElementById('heroin-value').textContent = (gameState.inventory.heroin * gameState.marketPrices.heroin).toLocaleString();
+                document.getElementById('marijuana-value').textContent = (gameState.inventory.marijuana * gameState.marketPrices.marijuana).toLocaleString();
+                document.getElementById('pills-value').textContent = (gameState.inventory.pills * gameState.marketPrices.pills).toLocaleString();
+                
+                // Update production UI
+                document.getElementById('cocaine-lab-level').textContent = gameState.production.cocaine.level;
+                document.getElementById('heroin-lab-level').textContent = gameState.production.heroin.level;
+                document.getElementById('marijuana-lab-level').textContent = gameState.production.marijuana.level;
+                
+                document.getElementById('cocaine-production').textContent = gameState.production.cocaine.rate;
+                document.getElementById('heroin-production').textContent = gameState.production.heroin.rate;
+                document.getElementById('marijuana-production').textContent = gameState.production.marijuana.rate;
+                
+                document.getElementById('cocaine-lab-cost').textContent = gameState.productionCosts.cocaine.toLocaleString();
+                document.getElementById('heroin-lab-cost').textContent = gameState.productionCosts.heroin.toLocaleString();
+                document.getElementById('marijuana-lab-cost').textContent = gameState.productionCosts.marijuana.toLocaleString();
+                
+                // Update progress bars
+                document.getElementById('cocaine-progress').style.width = `${gameState.production.cocaine.progress}%`;
+                document.getElementById('heroin-progress').style.width = `${gameState.production.heroin.progress}%`;
+                document.getElementById('marijuana-progress').style.width = `${gameState.production.marijuana.progress}%`;
+                
+                // Update real estate UI
+                for (const property in gameState.realEstate) {
+                    const element = document.getElementById(`${property}-owned`);
+                    if (element) {
+                        element.style.display = gameState.realEstate[property].owned ? 'inline-block' : 'none';
+                    }
+                }
+                
+                // Update business UI
+                for (const business in gameState.businesses) {
+                    const element = document.getElementById(`${business}-owned`);
+                    if (element) {
+                        element.style.display = gameState.businesses[business].owned ? 'inline-block' : 'none';
+                    }
+                }
+                
+                // Update stocks UI
+                for (const stock in gameState.stocks) {
+                    document.getElementById(`${stock}-owned`).textContent = gameState.stocks[stock].owned;
+                    document.getElementById(`${stock}-price`).textContent = gameState.stocks[stock].price;
+                    document.getElementById(`${stock}-value`).textContent = (gameState.stocks[stock].owned * gameState.stocks[stock].price).toLocaleString();
+                }
+            }
+            
+            // Initialize UI
+            updateUI();
+            
+            // Add event to event log
+            function addEvent(text, type) {
+                const eventLog = document.getElementById('event-log');
+                const event = document.createElement('div');
+                event.classList.add('event', type);
+                event.textContent = text;
+                eventLog.prepend(event);
+                
+                // Limit number of events shown
+                if (eventLog.children.length > 5) {
+                    eventLog.removeChild(eventLog.lastChild);
+                }
+            }
+            
+            // Buy items function
+            function buyItem(item, amount = 1) {
+                const price = gameState.marketPrices[item] * amount;
+                if (gameState.cash >= price && gameState.marketAvailability[item] >= amount) {
+                    gameState.cash -= price;
+                    gameState.inventory[item] += amount;
+                    gameState.marketAvailability[item] -= amount;
+                    
+                    // Increase risk for buying
+                    gameState.risk = Math.min(100, gameState.risk + (amount * 0.5));
+                    
+                    addEvent(`Bought ${amount} units of ${item} for $${price.toLocaleString()}`, 'neutral');
+                    updateUI();
+                } else {
+                    addEvent(`Cannot buy ${amount} units of ${item}`, 'negative');
+                }
+            }
+            
+            // Sell items function
+            function sellItem(item, amount = 1) {
+                if (gameState.inventory[item] >= amount) {
+                    const price = gameState.marketPrices[item] * amount;
+                    gameState.cash += price;
+                    gameState.inventory[item] -= amount;
+                    gameState.marketAvailability[item] += amount;
+                    
+                    // Increase risk for selling
+                    gameState.risk = Math.min(100, gameState.risk + (amount * 0.3));
+                    
+                    addEvent(`Sold ${amount} units of ${item} for $${price.toLocaleString()}`, 'positive');
+                    updateUI();
+                } else {
+                    addEvent(`Not enough ${item} to sell`, 'negative');
+                }
+            }
+            
+            // Upgrade production
+            function upgradeProduction(item) {
+                const cost = gameState.productionCosts[item];
+                if (gameState.cash >= cost) {
+                    gameState.cash -= cost;
+                    gameState.production[item].level++;
+                    gameState.production[item].rate = gameState.production[item].level * 2;
+                    gameState.productionCosts[item] = Math.floor(cost * 1.5);
+                    
+                    addEvent(`Upgraded ${item} production to level ${gameState.production[item].level}`, 'positive');
+                    updateUI();
+                } else {
+                    addEvent(`Not enough cash to upgrade ${item} production`, 'negative');
+                }
+            }
+            
+            // Speed up production
+            function speedUpProduction(item) {
+                const cost = item === 'cocaine' ? 5000 : item === 'heroin' ? 4000 : 2000;
+                if (gameState.cash >= cost) {
+                    gameState.cash -= cost;
+                    gameState.production[item].progress = 100;
+                    addEvent(`Sped up ${item} production for $${cost.toLocaleString()}`, 'neutral');
+                    updateUI();
+                } else {
+                    addEvent(`Not enough cash to speed up ${item} production`, 'negative');
+                }
+            }
+            
+            // Buy real estate
+            function buyRealEstate(property) {
+                const realEstate = gameState.realEstate[property];
+                if (gameState.cash >= realEstate.price && !realEstate.owned) {
+                    gameState.cash -= realEstate.price;
+                    realEstate.owned = true;
+                    
+                    // Apply real estate effects
+                    if (property === 'apartment' || property === 'villa') {
+                        gameState.risk = Math.max(10, gameState.risk - 5);
+                    }
+                    
+                    addEvent(`Purchased ${property} for $${realEstate.price.toLocaleString()}`, 'positive');
+                    updateUI();
+                } else if (realEstate.owned) {
+                    addEvent(`You already own the ${property}`, 'neutral');
+                } else {
+                    addEvent(`Not enough cash to buy ${property}`, 'negative');
+                }
+            }
+            
+            // Buy business
+            function buyBusiness(business) {
+                const biz = gameState.businesses[business];
+                if (gameState.cash >= biz.price && !biz.owned) {
+                    gameState.cash -= biz.price;
+                    biz.owned = true;
+                    
+                    addEvent(`Purchased ${business} business for $${biz.price.toLocaleString()}`, 'positive');
+                    updateUI();
+                } else if (biz.owned) {
+                    addEvent(`You already own the ${business} business`, 'neutral');
+                } else {
+                    addEvent(`Not enough cash to buy ${business} business`, 'negative');
+                }
+            }
+            
+            // Launder money through businesses
+            function launderMoney(business) {
+                const biz = gameState.businesses[business];
+                if (biz.owned) {
+                    const amount = biz.launder;
+                    if (gameState.cash >= amount) {
+                        gameState.cash -= amount;
+                        gameState.bank += amount;
+                        gameState.risk = Math.max(10, gameState.risk - 3);
+                        
+                        addEvent(`Laundered $${amount.toLocaleString()} through your ${business} business`, 'positive');
+                        updateUI();
+                    } else {
+                        addEvent(`Not enough cash to launder through ${business}`, 'negative');
+                    }
+                } else {
+                    addEvent(`You don't own a ${business} business`, 'negative');
+                }
+            }
+            
+            // Buy stocks
+            function buyStock(stock, amount = 10) {
+                const stockData = gameState.stocks[stock];
+                const cost = stockData.price * amount;
+                if (gameState.cash >= cost) {
+                    gameState.cash -= cost;
+                    stockData.owned += amount;
+                    
+                    addEvent(`Bought ${amount} shares of ${stock} for $${cost.toLocaleString()}`, 'neutral');
+                    updateUI();
+                } else {
+                    addEvent(`Not enough cash to buy ${stock} stock`, 'negative');
+                }
+            }
+            
+            // Sell stocks
+            function sellStock(stock, amount = 10) {
+                const stockData = gameState.stocks[stock];
+                if (stockData.owned >= amount) {
+                    const value = stockData.price * amount;
+                    gameState.cash += value;
+                    stockData.owned -= amount;
+                    
+                    addEvent(`Sold ${amount} shares of ${stock} for $${value.toLocaleString()}`, 'positive');
+                    updateUI();
+                } else {
+                    addEvent(`Not enough ${stock} stock to sell`, 'negative');
+                }
+            }
+            
+            // Buy equipment
+            function buyEquipment(item) {
+                const costs = {
+                    car: 100000,
+                    security: 250000,
+                    warehouse: 500000,
+                    armored: 750000
+                };
+                
+                if (gameState.cash >= costs[item] && !gameState.equipment[item]) {
+                    gameState.cash -= costs[item];
+                    gameState.equipment[item] = true;
+                    
+                    // Apply equipment effects
+                    if (item === 'security') {
+                        gameState.risk = Math.max(10, gameState.risk - 15);
+                    }
+                    
+                    addEvent(`Purchased ${item} for $${costs[item].toLocaleString()}`, 'positive');
+                    updateUI();
+                } else if (gameState.equipment[item]) {
+                    addEvent(`You already have the ${item}`, 'neutral');
+                } else {
+                    addEvent(`Not enough cash to buy ${item}`, 'negative');
+                }
+            }
+            
+            // Establish connection
+            function establishConnection(item) {
+                const costs = {
+                    police: 200000,
+                    customs: 350000,
+                    lieutenant: 600000,
+                    banker: 400000
+                };
+                
+                if (gameState.cash >= costs[item] && !gameState.connections[item]) {
+                    gameState.cash -= costs[item];
+                    gameState.connections[item] = true;
+                    
+                    // Apply connection effects
+                    if (item === 'police') {
+                        gameState.risk = Math.max(10, gameState.risk - 10);
+                    } else if (item === 'banker') {
+                        // Bank interest would be applied in nextDay function
+                    }
+                    
+                    addEvent(`Established connection with ${item} for $${costs[item].toLocaleString()}`, 'positive');
+                    updateUI();
+                } else if (gameState.connections[item]) {
+                    addEvent(`You already have a connection with ${item}`, 'neutral');
+                } else {
+                    addEvent(`Not enough cash to establish connection with ${item}`, 'negative');
+                }
+            }
+            
+            // Travel function
+            function travel() {
+                // Randomly change market prices when traveling
+                for (const item in gameState.marketPrices) {
+                    const change = Math.random() * 0.4 + 0.8; // Between 0.8 and 1.2
+                    gameState.marketPrices[item] = Math.floor(gameState.marketPrices[item] * change);
+                    
+                    // Reset availability
+                    gameState.marketAvailability[item] = Math.floor(Math.random() * 20) + 10;
+                }
+                
+                // Randomly change stock prices
+                for (const stock in gameState.stocks) {
+                    const change = Math.random() * 0.4 + 0.8; // Between 0.8 and 1.2
+                    gameState.stocks[stock].price = Math.floor(gameState.stocks[stock].price * change);
+                }
+                
+                // Increase risk when traveling
+                gameState.risk = Math.min(100, gameState.risk + 5);
+                
+                addEvent('Traveled to a new location. Market prices have changed!', 'neutral');
+                updateUI();
+            }
+            
+            // Bank function
+            function bankAction() {
+                if (gameState.cash > 0) {
+                    const amount = Math.floor(gameState.cash * 0.1); // Deposit 10% of cash
+                    gameState.cash -= amount;
+                    gameState.bank += amount;
+                    
+                    // Decrease risk when using bank
+                    gameState.risk = Math.max(10, gameState.risk - 2);
+                    
+                    addEvent(`Deposited $${amount.toLocaleString()} into your bank account`, 'positive');
+                    updateUI();
+                } else {
+                    addEvent('You have no cash to deposit', 'negative');
+                }
+            }
+            
+            // Progress to next day
+            function nextDay() {
+                gameState.day++;
+                
+                // Process production
+                for (const item in gameState.production) {
+                    if (gameState.production[item].level > 0) {
+                        gameState.production[item].progress += 20;
+                        if (gameState.production[item].progress >= 100) {
+                            const amount = gameState.production[item].rate;
+                            gameState.inventory[item] += amount;
+                            gameState.production[item].progress = 0;
+                            addEvent(`Produced ${amount} units of ${item}`, 'positive');
+                        }
+                    }
+                }
+                
+                // Process real estate income
+                for (const property in gameState.realEstate) {
+                    if (gameState.realEstate[property].owned) {
+                        const income = gameState.realEstate[property].income;
+                        gameState.cash += income;
+                        addEvent(`Earned $${income.toLocaleString()} from your ${property}`, 'positive');
+                    }
+                }
+                
+                // Process business income
+                for (const business in gameState.businesses) {
+                    if (gameState.businesses[business].owned) {
+                        const income = gameState.businesses[business].income;
+                        gameState.cash += income;
+                        addEvent(`Earned $${income.toLocaleString()} from your ${business} business`, 'positive');
+                    }
+                }
+                
+                // Apply bank interest if banker connection exists
+                if (gameState.connections.banker && gameState.bank > 0) {
+                    const interest = Math.floor(gameState.bank * 0.05);
+                    gameState.bank += interest;
+                    addEvent(`Earned $${interest.toLocaleString()} interest from bank`, 'positive');
+                }
+                
+                // Random events
+                const events = [
+                    { text: 'Prices increased due to high demand', type: 'positive', effect: () => {
+                        for (const item in gameState.marketPrices) {
+                            gameState.marketPrices[item] = Math.floor(gameState.marketPrices[item] * 1.15);
+                        }
+                    }},
+                    { text: 'Police crackdown in your area', type: 'warning', effect: () => {
+                        gameState.risk = Math.min(100, gameState.risk + 15);
+                    }},
+                    { text: 'You found a better supplier', type: 'positive', effect: () => {
+                        for (const item in gameState.marketPrices) {
+                            gameState.marketPrices[item] = Math.floor(gameState.marketPrices[item] * 0.9);
+                        }
+                    }},
+                    { text: 'Rival cartel stole some of your product', type: 'negative', effect: () => {
+                        for (const item in gameState.inventory) {
+                            if (gameState.inventory[item] > 10) {
+                                gameState.inventory[item] = Math.floor(gameState.inventory[item] * 0.8);
+                            }
+                        }
+                    }},
+                    { text: 'You had a successful day of sales', type: 'positive', effect: () => {
+                        gameState.cash += 50000;
+                    }},
+                    { text: 'Stock market is booming!', type: 'positive', effect: () => {
+                        for (const stock in gameState.stocks) {
+                            gameState.stocks[stock].price = Math.floor(gameState.stocks[stock].price * 1.2);
+                        }
+                    }},
+                    { text: 'Economic crisis affecting your investments', type: 'negative', effect: () => {
+                        for (const stock in gameState.stocks) {
+                            gameState.stocks[stock].price = Math.floor(gameState.stocks[stock].price * 0.8);
+                        }
+                    }}
+                ];
+                
+                const randomEvent = events[Math.floor(Math.random() * events.length)];
+                randomEvent.effect();
+                addEvent(randomEvent.text, randomEvent.type);
+                
+                // Update risk (random change between -5% and +5%)
+                const riskChange = Math.floor(Math.random() * 11) - 5;
+                gameState.risk = Math.max(10, Math.min(100, gameState.risk + riskChange));
+                
+                updateUI();
+            }
+            
+            // Add event listeners to market buttons
+            document.querySelectorAll('.btn-buy[data-item]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const item = this.getAttribute('data-item');
+                    buyItem(item);
+                });
+            });
+            
+            document.querySelectorAll('.btn-sell[data-item]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const item = this.getAttribute('data-item');
+                    sellItem(item);
+                });
+            });
+            
+            // Add event listeners to production buttons
+            document.querySelectorAll('.btn-upgrade[data-production]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const item = this.getAttribute('data-production');
+                    upgradeProduction(item);
+                });
+            });
+            
+            document.querySelectorAll('.btn-buy[data-production]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const item = this.getAttribute('data-production');
+                    speedUpProduction(item);
+                });
+            });
+            
+            // Add event listeners to real estate buttons
+            document.querySelectorAll('.btn-upgrade[data-realestate]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const item = this.getAttribute('data-realestate');
+                    buyRealEstate(item);
+                });
+            });
+            
+            // Add event listeners to business buttons
+            document.querySelectorAll('.btn-upgrade[data-business]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const item = this.getAttribute('data-business');
+                    buyBusiness(item);
+                });
+            });
+            
+            document.querySelectorAll('.btn-buy[data-business]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const item = this.getAttribute('data-business');
+                    launderMoney(item);
+                });
+            });
+            
+            // Add event listeners to stock buttons
+            document.querySelectorAll('.btn-buy[data-stock]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const item = this.getAttribute('data-stock');
+                    buyStock(item);
+                });
+            });
+            
+            document.querySelectorAll('.btn-sell[data-stock]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const item = this.getAttribute('data-stock');
+                    sellStock(item);
+                });
+            });
+            
+            // Add event listeners to equipment buttons
+            document.querySelectorAll('.btn-upgrade[data-equipment]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const item = this.getAttribute('data-equipment');
+                    buyEquipment(item);
+                });
+            });
+            
+            // Add event listeners to connection buttons
+            document.querySelectorAll('.btn-upgrade[data-connection]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const item = this.getAttribute('data-connection');
+                    establishConnection(item);
+                });
+            });
+            
+            // Add event listeners to action buttons
+            document.getElementById('travel-btn').addEventListener('click', travel);
+            document.getElementById('bank-btn').addEventListener('click', bankAction);
+            document.getElementById('next-day-btn').addEventListener('click', nextDay);
+            document.getElementById('stats-btn').addEventListener('click', () => {
+                addEvent('Statistics: ' + 
+                         `Cash: $${gameState.cash.toLocaleString()}, ` +
+                         `Bank: $${gameState.bank.toLocaleString()}, ` +
+                         `Risk: ${gameState.risk}%`, 'neutral');
+            });
+        });
+    </script>
+</body>
+</html>
