@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Venezuelan Cartel Money Game</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 100%);
+            color: #e0e1dd;
+            min-height: 100vh;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        header {
+            text-align: center;
+            padding: 15px 10px;
+            background: rgba(26, 36, 56, 0.8);
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            border: 1px solid #415a77;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            color: #e0e1dd;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: #9ca3af;
+            margin-bottom: 10px;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat-box {
+            background: rgba(26, 36, 56, 0.8);
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            border: 1px solid #415a77;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fca311;
+            margin-top: 5px;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+            background: rgba(26, 36, 56, 0.8);
+            border-radius: 12px;
+            padding: 5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            border: 1px solid #415a77;
+        }
+
+        .tab {
+            flex: 1;
+            min-width: 80px;
+            padding: 12px 5px;
+            text-align: center;
+            background: #1f3050;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+            margin: 2px;
+        }
+
+        .tab.active {
+            background: #415a77;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .content-area {
+            background: rgba(26, 36, 56, 0.8);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            min-height: 300px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            border: 1px solid #415a77;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .item-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .item {
+            background: rgba(38, 49, 71, 0.8);
+            padding: 12px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            border: 1px solid #4c6b97;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .item-details {
+            font-size: 0.85rem;
+            color: #9ca3af;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            min-width: 70px;
+        }
+
+        .btn-buy {
+            background: linear-gradient(to bottom, #2ecc71, #27ae60);
+            color: white;
+        }
+
+        .btn-sell {
+            background: linear-gradient(to bottom, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .btn-upgrade {
+            background: linear-gradient(to bottom, #3498db, #2980b9);
+            color: white;
+        }
+
+        .btn-rent {
+            background: linear-gradient(to bottom, #9b59b6, #8e44ad);
+            color: white;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .event-log {
+            background: rgba(20, 30, 48, 0.9);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+            height: 120px;
+            overflow-y: auto;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+            border: 1px solid #415a77;
+        }
+
+        .event {
+            padding: 8px 0;
+            border-bottom: 1px solid #2d3748;
+            font-size: 0.9rem;
+        }
+
+        .event:last-child {
+            border-bottom: none;
+        }
+
+        .positive {
+            color: #2ecc71;
+        }
+
+        .negative {
+            color: #e74c3c;
+        }
+
+        .neutral {
+            color: #3498db;
+        }
+
+        .warning {
+            color: #f39c12;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .action-btn {
+            padding: 15px;
+            border-radius: 10px;
+            border: none;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            background: linear-gradient(to bottom, #415a77, #2d3748);
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+
+        .action-btn i {
+            font-size: 1.5rem;
+        }
+
+        .risk-meter {
+            height: 10px;
+            background: #2d3748;
+            border-radius: 5px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .risk-level {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #1b263b;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .close {
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
+        .quantity-btn {
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            background: #415a77;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .quantity-input {
+            width: 60px;
+            height: 40px;
+            text-align: center;
+            margin: 0 10px;
+            font-size: 18px;
+            border: 2px solid #415a77;
+            border-radius: 5px;
+            background: #0d1b2a;
+            color: white;
+        }
+
+        .production-info {
+            font-size: 0.9rem;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .bank-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .bank-content {
+            background-color: #1b263b;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .bank-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .bank-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .bank-input {
+            padding: 10px;
+            border-radius: 5px;
+            border: 2px solid #415a77;
+            background: #0d1b2a;
+            color: white;
+            font-size: 16px;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                max-width: 600px;
+            }
+            
+            .stats-container {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .action-buttons {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .tab {
+                font-size: 0.9rem;
+                min-width: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Venezuelan Cartel Money Game</h1>
+            <div class="subtitle">Start with $3,000,000 and build your empire</div>
+        </header>
+
+        <div class="stats-container">
+            <div class="stat-box">
+                <div>Cash</div>
+                <div class="stat-value" id="cash">$3,000,000</div>
+            </div>
+            <div class="stat-box">
+                <div>Bank</div>
+                <div class="stat-value" id="bank">$0</div>
+            </div>
+            <div class="stat-box">
+                <div>Day</div>
+                <div class="stat-value" id="day">1</div>
+            </div>
+            <div class="stat-box">
+                <div>Risk</div>
+                <div class="stat-value" id="risk">10%</div>
+                <div class="risk-meter">
+                    <div class="risk-level" id="risk-level" style="width: 10%; background: #2ecc71;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="market">Market</div>
+            <div class="tab" data-tab="inventory">Inventory</div>
+            <div class="tab" data-tab="business">Businesses</div>
+            <div class="tab" data-tab="realestate">Real Estate</div>
+            <div class="tab" data-tab="luxury">Luxury</div>
+            <div class="tab" data-tab="banking">Banking</div>
+        </div>
+
+        <div class="content-area">
+            <div class="content-section active" id="market-content">
+                <h2>Drug Market</h2>
+                <div class="item-list" id="market-items">
+                    <!-- Market items will be generated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="content-section" id="inventory-content">
+                <h2>Your Inventory</h2>
+                <div class="item-list" id="inventory-items">
+                    <!-- Inventory items will be generated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="content-section" id="business-content">
+                <h2>Businesses</h2>
+                <div class="item-list" id="business-items">
+                    <!-- Business items will be generated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="content-section" id="realestate-content">
+                <h2>Real Estate</h2>
+                <div class="item-list" id="realestate-items">
+                    <!-- Real Estate items will be generated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="content-section" id="luxury-content">
+                <h2>Luxury Cars & Items</h2>
+                <div class="item-list" id="luxury-items">
+                    <!-- Luxury items will be generated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="content-section" id="banking-content">
+                <h2>Banking Operations</h2>
+                <div class="item-list" id="banking-items">
+                    <!-- Banking items will be generated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <div class="event-log" id="event-log">
+            <div class="event positive">Welcome to the Venezuelan Cartel Money Game!</div>
+            <div class="event neutral">You started with $3,000,000. Build your empire!</div>
+            <div class="event warning">Be careful - higher risk brings higher rewards but more danger!</div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="action-btn" id="travel-btn">
+                <i class="fas fa-exchange-alt"></i>
+                <span>Travel</span>
+            </button>
+            <button class="action-btn" id="bank-btn">
+                <i class="fas fa-money-bill-wave"></i>
+                <span>Bank</span>
+            </button>
+            <button class="action-btn" id="next-day-btn">
+                <i class="fas fa-forward"></i>
+                <span>Next Day</span>
+            </button>
+            <button class="action-btn" id="launder-btn">
+                <i class="fas fa-money-bill"></i>
+                <span>Launder</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Quantity Modal -->
+    <div class="modal" id="quantity-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Buy Item</h2>
+                <span class="close" id="close-modal">&times;</span>
+            </div>
+            <div id="modal-description">Select quantity:</div>
+            <div class="quantity-control">
+                <button class="quantity-btn" id="decrease-qty">-</button>
+                <input type="number" min="1" value="1" class="quantity-input" id="quantity-input">
+                <button class="quantity-btn" id="increase-qty">+</button>
+            </div>
+            <div id="modal-total">Total: $0</div>
+            <button class="btn" id="modal-action-btn" style="width: 100%; margin-top: 15px;">Buy</button>
+        </div>
+    </div>
+
+    <!-- Bank Modal -->
+    <div class="bank-modal" id="bank-modal">
+        <div class="bank-content">
+            <div class="bank-header">
+                <h2>Bank Operations</h2>
+                <span class="close" id="close-bank">&times;</span>
+            </div>
+            <div class="bank-controls">
+                <input type="number" class="bank-input" id="bank-amount" placeholder="Amount" min="1">
+                <button class="btn btn-buy" id="deposit-btn">Deposit</button>
+                <button class="btn btn-sell" id="withdraw-btn">Withdraw</button>
+                <button class="btn btn-upgrade" id="take-loan-btn">Take Loan</button>
+                <button class="btn btn-rent" id="repay-loan-btn">Repay Loan</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Game state
+            const gameState = {
+                cash: 3000000,
+                bank: 0,
+                day: 1,
+                risk: 10,
+                prestige: 0,
+                loan: 0,
+                loanInterest: 0.05, // 5% interest per day
+                inventory: {
+                    cocaine: { quantity: 0, cost: 0 },
+                    heroin: { quantity: 0, cost: 0 },
+                    marijuana: { quantity: 0, cost: 0 },
+                    pills: { quantity: 0, cost: 0 },
+                    meth: { quantity: 0, cost: 0 }
+                },
+                businesses: {
+                    nightclub: { owned: false, price: 500000, income: 10000, risk: 0.1 },
+                    casino: { owned: false, price: 1000000, income: 25000, risk: 0.2 },
+                    restaurant: { owned: false, price: 300000, income: 5000, risk: 0.05 },
+                    stripclub: { owned: false, price: 750000, income: 15000, risk: 0.15 }
+                },
+                realEstate: {
+                    safehouse: { owned: false, price: 300000, riskReduction: 0.2, rented: false, rentIncome: 2000 },
+                    apartment: { owned: false, price: 450000, storage: 0.3, rented: false, rentIncome: 3000 },
+                    warehouse: { owned: false, price: 800000, storage: 0.7, rented: false, rentIncome: 5000 },
+                    mansion: { owned: false, price: 2000000, riskReduction: 0.4, prestige: 0.5, rented: false, rentIncome: 10000 },
+                    commercial: { owned: false, price: 1500000, businessIncome: 0.1, rented: false, rentIncome: 8000 }
+                },
+                luxury: {
+                    sportsCar: { owned: false, prestige: 0.3, price: 250000 },
+                    yacht: { owned: false, prestige: 1.0, price: 3000000 },
+                    privateJet: { owned: false, prestige: 2.0, price: 15000000 },
+                    diamondWatch: { owned: false, prestige: 0.2, price: 100000 },
+                    goldChains: { owned: 0, prestige: 0.05, price: 50000 }
+                },
+                currentLocation: 'Caracas',
+                prices: {
+                    cocaine: 25000,
+                    heroin: 18000,
+                    marijuana: 4000,
+                    pills: 1500,
+                    meth: 22000
+                },
+                production: {
+                    meth: 0
+                }
+            };
+
+            // Modal state
+            let modalState = {
+                type: '', // 'buy' or 'sell'
+                item: '',
+                price: 0,
+                maxQuantity: 0
+            };
+
+            // DOM elements
+            const cashElement = document.getElementById('cash');
+            const bankElement = document.getElementById('bank');
+            const dayElement = document.getElementById('day');
+            const riskElement = document.getElementById('risk');
+            const riskLevelElement = document.getElementById('risk-level');
+            const eventLogElement = document.getElementById('event-log');
+            const quantityModal = document.getElementById('quantity-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalDescription = document.getElementById('modal-description');
+            const quantityInput = document.getElementById('quantity-input');
+            const modalTotal = document.getElementById('modal-total');
+            const modalActionBtn = document.getElementById('modal-action-btn');
+            const decreaseQtyBtn = document.getElementById('decrease-qty');
+            const increaseQtyBtn = document.getElementById('increase-qty');
+            const closeModalBtn = document.getElementById('close-modal');
+            
+            // Bank elements
+            const bankModal = document.getElementById('bank-modal');
+            const closeBankBtn = document.getElementById('close-bank');
+            const bankAmountInput = document.getElementById('bank-amount');
+            const depositBtn = document.getElementById('deposit-btn');
+            const withdrawBtn = document.getElementById('withdraw-btn');
+            const takeLoanBtn = document.getElementById('take-loan-btn');
+            const repayLoanBtn = document.getElementById('repay-loan-btn');
+
+            // Initialize the game
+            function initGame() {
+                updateUI();
+                generateMarketItems();
+                generateInventoryItems();
+                generateBusinessItems();
+                generateRealEstateItems();
+                generateLuxuryItems();
+                generateBankingItems();
+                
+                // Tab switching functionality
+                const tabs = document.querySelectorAll('.tab');
+                const contentSections = document.querySelectorAll('.content-section');
+                
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const tabName = tab.getAttribute('data-tab');
+                        
+                        // Update active tab
+                        tabs.forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+                        
+                        // Show corresponding content
+                        contentSections.forEach(section => {
+                            section.classList.remove('active');
+                            if (section.id === `${tabName}-content`) {
+                                section.classList.add('active');
+                            }
+                        });
+                    });
+                });
+
+                // Next day button
+                document.getElementById('next-day-btn').addEventListener('click', nextDay);
+                
+                // Bank button
+                document.getElementById('bank-btn').addEventListener('click', () => {
+                    bankModal.style.display = 'flex';
+                });
+                
+                // Travel button
+                document.getElementById('travel-btn').addEventListener('click', handleTravel);
+                
+                // Launder button
+                document.getElementById('launder-btn').addEventListener('click', handleLaunder);
+                
+                // Modal controls
+                decreaseQtyBtn.addEventListener('click', () => adjustQuantity(-1));
+                increaseQtyBtn.addEventListener('click', () => adjustQuantity(1));
+                quantityInput.addEventListener('input', updateModalTotal);
+                closeModalBtn.addEventListener('click', closeModal);
+                
+                // Bank controls
+                closeBankBtn.addEventListener('click', () => {
+                    bankModal.style.display = 'none';
+                });
+                depositBtn.addEventListener('click', handleDeposit);
+                withdrawBtn.addEventListener('click', handleWithdraw);
+                takeLoanBtn.addEventListener('click', handleTakeLoan);
+                repayLoanBtn.addEventListener('click', handleRepayLoan);
+            }
+
+            // Update UI with game state
+            function updateUI() {
+                cashElement.textContent = `$${formatNumber(gameState.cash)}`;
+                bankElement.textContent = `$${formatNumber(gameState.bank)}`;
+                dayElement.textContent = gameState.day;
+                riskElement.textContent = `${gameState.risk}%`;
+                
+                // Update risk level indicator
+                riskLevelElement.style.width = `${gameState.risk}%`;
+                
+                // Change color based on risk level
+                if (gameState.risk < 30) {
+                    riskLevelElement.style.background = '#2ecc71';
+                } else if (gameState.risk < 60) {
+                    riskLevelElement.style.background = '#f39c12';
+                } else {
+                    riskLevelElement.style.background = '#e74c3c';
+                }
+            }
+
+            // Format large numbers with commas
+            function formatNumber(num) {
+                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+
+            // Generate market items
+            function generateMarketItems() {
+                const marketItems = document.getElementById('market-items');
+                marketItems.innerHTML = '';
+                
+                for (const [item, price] of Object.entries(gameState.prices)) {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'item';
+                    
+                    const itemName = item.charAt(0).toUpperCase() + item.slice(1);
+                    
+                    itemElement.innerHTML = `
+                        <div class="item-info">
+                            <div class="item-name">${itemName}</div>
+                            <div class="item-details">Price: $${formatNumber(price)}</div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn btn-buy" data-item="${item}" data-price="${price}">Buy</button>
+                            <button class="btn btn-sell" data-item="${item}" data-price="${price}" ${gameState.inventory[item].quantity > 0 ? '' : 'disabled'}>Sell</button>
+                        </div>
+                    `;
+                    
+                    marketItems.appendChild(itemElement);
+                }
+                
+                // Add event listeners to market buttons
+                document.querySelectorAll('.btn-buy').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const item = this.getAttribute('data-item');
+                        const price = parseInt(this.getAttribute('data-price'));
+                        openModal('buy', item, price);
+                    });
+                });
+                
+                document.querySelectorAll('.btn-sell:not(:disabled)').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const item = this.getAttribute('data-item');
+                        const price = parseInt(this.getAttribute('data-price'));
+                        openModal('sell', item, price);
+                    });
+                });
+            }
+
+            // Generate inventory items
+            function generateInventoryItems() {
+                const inventoryItems = document.getElementById('inventory-items');
+                inventoryItems.innerHTML = '';
+                
+                for (const [item, data] of Object.entries(gameState.inventory)) {
+                    if (data.quantity > 0) {
+                        const itemElement = document.createElement('div');
+                        itemElement.className = 'item';
+                        
+                        const itemName = item.charAt(0).toUpperCase() + item.slice(1);
+                        const totalValue = data.quantity * (data.cost / data.quantity || gameState.prices[item]);
+                        
+                        itemElement.innerHTML = `
+                            <div class="item-info">
+                                <div class="item-name">${itemName}</div>
+                                <div class="item-details">Quantity: ${formatNumber(data.quantity)} | Value: $${formatNumber(totalValue)}</div>
+                            </div>
+                        `;
+                        
+                        inventoryItems.appendChild(itemElement);
+                    }
+                }
+                
+                if (inventoryItems.innerHTML === '') {
+                    inventoryItems.innerHTML = '<div class="item">Your inventory is empty</div>';
+                }
+            }
+
+            // Generate business items
+            function generateBusinessItems() {
+                const businessItems = document.getElementById('business-items');
+                businessItems.innerHTML = '';
+                
+                for (const [business, data] of Object.entries(gameState.businesses)) {
+                    const businessElement = document.createElement('div');
+                    businessElement.className = 'item';
+                    
+                    const businessName = business.charAt(0).toUpperCase() + business.slice(1);
+                    
+                    businessElement.innerHTML = `
+                        <div class="item-info">
+                            <div class="item-name">${businessName}</div>
+                            <div class="item-details">Price: $${formatNumber(data.price)} | Income: $${formatNumber(data.income)}/day</div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn ${data.owned ? 'btn-sell' : 'btn-buy'}" data-item="${business}" data-price="${data.price}">
+                                ${data.owned ? 'Sell' : 'Buy'}
+                            </button>
+                        </div>
+                    `;
+                    
+                    businessItems.appendChild(businessElement);
+                }
+                
+                // Add event listeners to business buttons
+                document.querySelectorAll('#business-items .btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const business = this.getAttribute('data-item');
+                        const price = parseInt(this.getAttribute('data-price'));
+                        
+                        if (this.classList.contains('btn-buy')) {
+                            buyBusiness(business, price);
+                        } else {
+                            sellBusiness(business, price);
+                        }
+                    });
+                });
+            }
+
+            // Generate real estate items
+            function generateRealEstateItems() {
+                const realEstateItems = document.getElementById('realestate-items');
+                realEstateItems.innerHTML = '';
+                
+                for (const [property, data] of Object.entries(gameState.realEstate)) {
+                    const propertyElement = document.createElement('div');
+                    propertyElement.className = 'item';
+                    
+                    const propertyName = property.charAt(0).toUpperCase() + property.slice(1);
+                    let benefits = '';
+                    
+                    if (data.riskReduction) benefits += `Risk: -${data.riskReduction*100}% `;
+                    if (data.storage) benefits += `Storage: +${data.storage*100}% `;
+                    if (data.prestige) benefits += `Prestige: +${data.prestige*100}% `;
+                    if (data.businessIncome) benefits += `Business Income: +${data.businessIncome*100}% `;
+                    
+                    propertyElement.innerHTML = `
+                        <div class="item-info">
+                            <div class="item-name">${propertyName} ${data.rented ? '(Rented Out)' : ''}</div>
+                            <div class="item-details">Price: $${formatNumber(data.price)} | ${benefits}</div>
+                            ${data.rented ? `<div class="item-details">Rental Income: $${formatNumber(data.rentIncome)}/day</div>` : ''}
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn ${data.owned ? 'btn-sell' : 'btn-buy'}" data-item="${property}" data-price="${data.price}">
+                                ${data.owned ? 'Sell' : 'Buy'}
+                            </button>
+                            ${data.owned && !data.rented ? `<button class="btn btn-rent" data-item="${property}">Rent Out</button>` : ''}
+                            ${data.owned && data.rented ? `<button class="btn btn-rent" data-item="${property}">Stop Rent</button>` : ''}
+                        </div>
+                    `;
+                    
+                    realEstateItems.appendChild(propertyElement);
+                }
+                
+                // Add event listeners to real estate buttons
+                document.querySelectorAll('#realestate-items .btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const property = this.getAttribute('data-item');
+                        
+                        if (this.classList.contains('btn-buy')) {
+                            const price = parseInt(this.getAttribute('data-price'));
+                            buyRealEstate(property, price);
+                        } else if (this.classList.contains('btn-sell')) {
+                            const price = parseInt(this.getAttribute('data-price'));
+                            sellRealEstate(property, price);
+                        } else if (this.classList.contains('btn-rent')) {
+                            toggleRentProperty(property);
+                        }
+                    });
+                });
+            }
+
+            // Generate luxury items
+            function generateLuxuryItems() {
+                const luxuryItems = document.getElementById('luxury-items');
+                luxuryItems.innerHTML = '';
+                
+                for (const [item, data] of Object.entries(gameState.luxury)) {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'item';
+                    
+                    const itemName = item.charAt(0).toUpperCase() + item.slice(1);
+                    
+                    if (item === 'goldChains') {
+                        itemElement.innerHTML = `
+                            <div class="item-info">
+                                <div class="item-name">${itemName} (Owned: ${data.owned})</div>
+                                <div class="item-details">Prestige: +${data.prestige*100}% each | Price: $${formatNumber(data.price)}</div>
+                            </div>
+                            <div class="item-actions">
+                                <button class="btn btn-buy" data-item="${item}" data-price="${data.price}">Buy</button>
+                            </div>
+                        `;
+                    } else {
+                        itemElement.innerHTML = `
+                            <div class="item-info">
+                                <div class="item-name">${itemName}</div>
+                                <div class="item-details">Prestige: +${data.prestige*100}% | Price: $${formatNumber(data.price)}</div>
+                            </div>
+                            <div class="item-actions">
+                                <button class="btn ${data.owned ? 'btn-sell' : 'btn-buy'}" data-item="${item}" data-price="${data.price}">
+                                    ${data.owned ? 'Sell' : 'Buy'}
+                                </button>
+                            </div>
+                        `;
+                    }
+                    
+                    luxuryItems.appendChild(itemElement);
+                }
+                
+                // Add event listeners to luxury buttons
+                document.querySelectorAll('#luxury-items .btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const item = this.getAttribute('data-item');
+                        const price = parseInt(this.getAttribute('data-price'));
+                        
+                        if (this.classList.contains('btn-buy')) {
+                            buyLuxury(item, price);
+                        } else {
+                            sellLuxury(item, price);
+                        }
+                    });
+                });
+            }
+
+            // Generate banking items
+            function generateBankingItems() {
+                const bankingItems = document.getElementById('banking-items');
+                bankingItems.innerHTML = '';
+                
+                // Loan information
+                const loanItem = document.createElement('div');
+                loanItem.className = 'item';
+                loanItem.innerHTML = `
+                    <div class="item-info">
+                        <div class="item-name">Current Loan</div>
+                        <div class="item-details">Amount: $${formatNumber(gameState.loan)} | Interest: ${gameState.loanInterest*100}% per day</div>
+                    </div>
+                `;
+                bankingItems.appendChild(loanItem);
+                
+                // Bank account information
+                const bankItem = document.createElement('div');
+                bankItem.className = 'item';
+                bankItem.innerHTML = `
+                    <div class="item-info">
+                        <div class="item-name">Bank Account</div>
+                        <div class="item-details">Balance: $${formatNumber(gameState.bank)}</div>
+                    </div>
+                `;
+                bankingItems.appendChild(bankItem);
+            }
+
+            // Open modal for buying/selling
+            function openModal(type, item, price) {
+                modalState.type = type;
+                modalState.item = item;
+                modalState.price = price;
+                
+                const itemName = item.charAt(0).toUpperCase() + item.slice(1);
+                modalTitle.textContent = `${type === 'buy' ? 'Buy' : 'Sell'} ${itemName}`;
+                
+                if (type === 'buy') {
+                    // Calculate how many the player can afford
+                    const maxAffordable = Math.floor(gameState.cash / price);
+                    modalState.maxQuantity = maxAffordable;
+                    modalDescription.textContent = `Select quantity (Max: ${formatNumber(maxAffordable)}):`;
+                } else {
+                    // Selling - use inventory quantity
+                    modalState.maxQuantity = gameState.inventory[item].quantity;
+                    modalDescription.textContent = `Select quantity (You have: ${formatNumber(modalState.maxQuantity)}):`;
+                }
+                
+                quantityInput.value = '1';
+                quantityInput.max = modalState.maxQuantity;
+                updateModalTotal();
+                
+                modalActionBtn.textContent = type === 'buy' ? 'Buy' : 'Sell';
+                modalActionBtn.className = `btn ${type === 'buy' ? 'btn-buy' : 'btn-sell'}`;
+                modalActionBtn.onclick = () => {
+                    if (type === 'buy') {
+                        handleBuy(parseInt(quantityInput.value));
+                    } else {
+                        handleSell(parseInt(quantityInput.value));
+                    }
+                };
+                
+                quantityModal.style.display = 'flex';
+            }
+
+            // Close modal
+            function closeModal() {
+                quantityModal.style.display = 'none';
+            }
+
+            // Adjust quantity in modal
+            function adjustQuantity(change) {
+                let newValue = parseInt(quantityInput.value) + change;
+                newValue = Math.max(1, Math.min(newValue, modalState.maxQuantity));
+                quantityInput.value = newValue;
+                updateModalTotal();
+            }
+
+            // Update modal total price
+            function updateModalTotal() {
+                const quantity = parseInt(quantityInput.value) || 1;
+                const total = quantity * modalState.price;
+                modalTotal.textContent = `Total: $${formatNumber(total)}`;
+            }
+
+            // Handle buy action
+            function handleBuy(quantity) {
+                const totalCost = quantity * modalState.price;
+                
+                if (gameState.cash >= totalCost) {
+                    gameState.cash -= totalCost;
+                    
+                    // Update inventory
+                    if (!gameState.inventory[modalState.item]) {
+                        gameState.inventory[modalState.item] = { quantity: 0, cost: 0 };
+                    }
+                    
+                    const currentCost = gameState.inventory[modalState.item].quantity * gameState.inventory[modalState.item].cost;
+                    const newCost = currentCost + totalCost;
+                    const newQuantity = gameState.inventory[modalState.item].quantity + quantity;
+                    
+                    gameState.inventory[modalState.item].quantity = newQuantity;
+                    gameState.inventory[modalState.item].cost = newCost / newQuantity;
+                    
+                    // Increase risk
+                    gameState.risk = Math.min(100, gameState.risk + (quantity * 0.5));
+                    
+                    addEvent(`Bought ${quantity} ${modalState.item} for $${formatNumber(totalCost)}`, 'neutral');
+                    closeModal();
+                    updateUI();
+                    generateInventoryItems();
+                    generateMarketItems(); // Update sell buttons
+                } else {
+                    addEvent("Not enough cash!", 'negative');
+                }
+            }
+
+            // Handle sell action
+            function handleSell(quantity) {
+                if (gameState.inventory[modalState.item].quantity >= quantity) {
+                    const totalIncome = quantity * modalState.price;
+                    
+                    gameState.cash += totalIncome;
+                    gameState.inventory[modalState.item].quantity -= quantity;
+                    
+                    // Decrease risk slightly
+                    gameState.risk = Math.max(10, gameState.risk - (quantity * 0.3));
+                    
+                    addEvent(`Sold ${quantity} ${modalState.item} for $${formatNumber(totalIncome)}`, 'positive');
+                    closeModal();
+                    updateUI();
+                    generateInventoryItems();
+                    generateMarketItems(); // Update sell buttons
+                } else {
+                    addEvent(`Not enough ${modalState.item} to sell!`, 'negative');
+                }
+            }
+
+            // Buy business
+            function buyBusiness(business, price) {
+                if (gameState.cash >= price) {
+                    gameState.cash -= price;
+                    gameState.businesses[business].owned = true;
+                    gameState.risk += gameState.businesses[business].risk * 100;
+                    
+                    addEvent(`Purchased ${business} for $${formatNumber(price)}`, 'positive');
+                    updateUI();
+                    generateBusinessItems();
+                } else {
+                    addEvent("Not enough cash to buy this business!", 'negative');
+                }
+            }
+
+            // Sell business
+            function sellBusiness(business, price) {
+                const sellPrice = Math.floor(price * 0.7); // 70% of original price
+                gameState.cash += sellPrice;
+                gameState.businesses[business].owned = false;
+                gameState.risk -= gameState.businesses[business].risk * 100;
+                
+                addEvent(`Sold ${business} for $${formatNumber(sellPrice)}`, 'positive');
+                updateUI();
+                generateBusinessItems();
+            }
+
+            // Buy real estate
+            function buyRealEstate(property, price) {
+                if (gameState.cash >= price) {
+                    gameState.cash -= price;
+                    gameState.realEstate[property].owned = true;
+                    
+                    addEvent(`Purchased ${property} for $${formatNumber(price)}`, 'positive');
+                    updateUI();
+                    generateRealEstateItems();
+                } else {
+                    addEvent("Not enough cash to buy this property!", 'negative');
+                }
+            }
+
+            // Sell real estate
+            function sellRealEstate(property, price) {
+                const sellPrice = Math.floor(price * 0.8); // 80% of original price
+                gameState.cash += sellPrice;
+                gameState.realEstate[property].owned = false;
+                gameState.realEstate[property].rented = false;
+                
+                addEvent(`Sold ${property} for $${formatNumber(sellPrice)}`, 'positive');
+                updateUI();
+                generateRealEstateItems();
+            }
+
+            // Toggle rent property
+            function toggleRentProperty(property) {
+                if (gameState.realEstate[property].rented) {
+                    gameState.realEstate[property].rented = false;
+                    addEvent(`Stopped renting out ${property}`, 'neutral');
+                } else {
+                    gameState.realEstate[property].rented = true;
+                    addEvent(`Started renting out ${property} for $${formatNumber(gameState.realEstate[property].rentIncome)}/day`, 'positive');
+                }
+                updateUI();
+                generateRealEstateItems();
+            }
+
+            // Buy luxury item
+            function buyLuxury(item, price) {
+                if (gameState.cash >= price) {
+                    gameState.cash -= price;
+                    
+                    if (item === 'goldChains') {
+                        gameState.luxury[item].owned += 1;
+                    } else {
+                        gameState.luxury[item].owned = true;
+                    }
+                    
+                    addEvent(`Purchased ${item} for $${formatNumber(price)}`, 'positive');
+                    updateUI();
+                    generateLuxuryItems();
+                } else {
+                    addEvent("Not enough cash to buy this luxury item!", 'negative');
+                }
+            }
+
+            // Sell luxury item
+            function sellLuxury(item, price) {
+                const sellPrice = Math.floor(price * 0.6); // 60% of original price
+                gameState.cash += sellPrice;
+                
+                if (item === 'goldChains' && gameState.luxury[item].owned > 0) {
+                    gameState.luxury[item].owned -= 1;
+                } else {
+                    gameState.luxury[item].owned = false;
+                }
+                
+                addEvent(`Sold ${item} for $${formatNumber(sellPrice)}`, 'positive');
+                updateUI();
+                generateLuxuryItems();
+            }
+
+            // Handle deposit
+            function handleDeposit() {
+                const amount = parseInt(bankAmountInput.value) || 0;
+                if (amount > 0 && amount <= gameState.cash) {
+                    gameState.cash -= amount;
+                    gameState.bank += amount;
+                    addEvent(`Deposited $${formatNumber(amount)} into bank`, 'positive');
+                    updateUI();
+                    bankAmountInput.value = '';
+                    bankModal.style.display = 'none';
+                    generateBankingItems();
+                } else {
+                    addEvent("Invalid deposit amount!", 'negative');
+                }
+            }
+
+            // Handle withdraw
+            function handleWithdraw() {
+                const amount = parseInt(bankAmountInput.value) || 0;
+                if (amount > 0 && amount <= gameState.bank) {
+                    gameState.bank -= amount;
+                    gameState.cash += amount;
+                    addEvent(`Withdrew $${formatNumber(amount)} from bank`, 'positive');
+                    updateUI();
+                    bankAmountInput.value = '';
+                    bankModal.style.display = 'none';
+                    generateBankingItems();
+                } else {
+                    addEvent("Invalid withdrawal amount!", 'negative');
+                }
+            }
+
+            // Handle take loan
+            function handleTakeLoan() {
+                const amount = parseInt(bankAmountInput.value) || 0;
+                if (amount > 0) {
+                    gameState.cash += amount;
+                    gameState.loan += amount;
+                    addEvent(`Took a loan of $${formatNumber(amount)} at ${gameState.loanInterest*100}% interest`, 'warning');
+                    updateUI();
+                    bankAmountInput.value = '';
+                    bankModal.style.display = 'none';
+                    generateBankingItems();
+                } else {
+                    addEvent("Invalid loan amount!", 'negative');
+                }
+            }
+
+            // Handle repay loan
+            function handleRepayLoan() {
+                const amount = parseInt(bankAmountInput.value) || 0;
+                if (amount > 0 && amount <= gameState.loan && amount <= gameState.cash) {
+                    gameState.cash -= amount;
+                    gameState.loan -= amount;
+                    addEvent(`Repaid $${formatNumber(amount)} of your loan`, 'positive');
+                    updateUI();
+                    bankAmountInput.value = '';
+                    bankModal.style.display = 'none';
+                    generateBankingItems();
+                } else {
+                    addEvent("Invalid repayment amount!", 'negative');
+                }
+            }
+
+            // Handle travel action
+            function handleTravel() {
+                addEvent("Travel feature coming soon!", 'neutral');
+            }
+
+            // Handle launder action
+            function handleLaunder() {
+                addEvent("Money laundering feature coming soon!", 'neutral');
+            }
+
+            // Next day function
+            function nextDay() {
+                gameState.day++;
+                
+                // Produce meth if labs are owned
+                if (gameState.production.meth > 0) {
+                    gameState.inventory.meth.quantity += gameState.production.meth;
+                    const productionValue = gameState.production.meth * gameState.prices.meth;
+                    addEvent(`Produced ${gameState.production.meth} units of meth worth $${formatNumber(productionValue)}`, 'positive');
+                }
+                
+                // Collect income from businesses
+                let businessIncome = 0;
+                for (const [business, data] of Object.entries(gameState.businesses)) {
+                    if (data.owned) {
+                        businessIncome += data.income;
+                    }
+                }
+                if (businessIncome > 0) {
+                    gameState.cash += businessIncome;
+                    addEvent(`Received $${formatNumber(businessIncome)} from businesses`, 'positive');
+                }
+                
+                // Collect rent from properties
+                let rentIncome = 0;
+                for (const [property, data] of Object.entries(gameState.realEstate)) {
+                    if (data.owned && data.rented) {
+                        rentIncome += data.rentIncome;
+                    }
+                }
+                if (rentIncome > 0) {
+                    gameState.cash += rentIncome;
+                    addEvent(`Received $${formatNumber(rentIncome)} from rental properties`, 'positive');
+                }
+                
+                // Pay loan interest
+                if (gameState.loan > 0) {
+                    const interest = Math.floor(gameState.loan * gameState.loanInterest);
+                    gameState.loan += interest;
+                    addEvent(`Loan interest: $${formatNumber(interest)} added to your debt`, 'negative');
+                }
+                
+                // Random events
+                const events = [
+                    { text: 'Prices increased due to high demand', type: 'positive' },
+                    { text: 'Police crackdown in your area', type: 'warning' },
+                    { text: 'You found a better supplier', type: 'positive' },
+                    { text: 'Rival cartel stole some of your product', type: 'negative' },
+                    { text: 'You had a successful day of sales', type: 'positive' }
+                ];
+                
+                const randomEvent = events[Math.floor(Math.random() * events.length)];
+                addEvent(randomEvent.text, randomEvent.type);
+                
+                // Update risk (random change between -5% and +5%)
+                const riskChange = Math.floor(Math.random() * 11) - 5;
+                gameState.risk = Math.max(10, Math.min(100, gameState.risk + riskChange));
+                
+                // Update prices (random fluctuation)
+                for (const item in gameState.prices) {
+                    const change = Math.random() * 0.2 - 0.1; // -10% to +10%
+                    gameState.prices[item] = Math.max(1000, Math.floor(gameState.prices[item] * (1 + change)));
+                }
+                
+                updateUI();
+                generateMarketItems();
+                generateInventoryItems();
+                generateBankingItems();
+            }
+
+            // Add event to event log
+            function addEvent(text, type) {
+                const event = document.createElement('div');
+                event.classList.add('event', type);
+                event.textContent = text;
+                eventLogElement.prepend(event);
+                
+                // Limit number of events shown
+                if (eventLogElement.children.length > 5) {
+                    eventLogElement.removeChild(eventLogElement.lastChild);
+                }
+            }
+
+            // Initialize the game
+            initGame();
+        });
+    </script>
+</body>
+</html>
